@@ -1,0 +1,17 @@
+[package]
+name = "snug"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+cairo-rs = { version = "0.21.2", features = ["png", "use_glib"] }
+clap = { version = "4.5.49", features = ["derive"] }
+ctrlc = "3.5.0"
+dirs = "6.0.0"
+eyre = "0.6.12"
+nix = "0.30.1"
+notify = "8.2.0"
+rune-cfg = "0.1.32"
+serde = "1.0.228"
+smithay-client-toolkit = "0.20.0"
+wayland-client = "0.31.11"

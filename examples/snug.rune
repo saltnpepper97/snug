@@ -1,0 +1,27 @@
+@author "Dustin Pilgrim"
+@description "make your desktop snug with a nice frame :)"
+
+# any display name will work
+# HDMI-A-1, DP-1, DVI-D-1, etc.
+
+# Primary display (DP-1)
+DP-1:
+  radius = 15
+  left = 95
+  right = 28
+  top = 28
+  bottom = 28
+  color = "161b22"
+  opacity = 1.0
+end
+
+# Secondary display (DP-2)
+DP-2:
+  radius = 15
+  left = 95
+  right = 30
+  top = 30
+  bottom = 30
+  color = "161b22"
+  opacity = 1.0
+end
