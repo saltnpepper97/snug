@@ -13,6 +13,11 @@ pub struct DisplayConfig {
     pub bottom: i32,
     pub color: String,
     pub opacity: Option<f64>,
+    // Shadow properties
+    pub shadow_enabled: Option<bool>,
+    pub shadow_color: Option<String>,
+    pub shadow_opacity: Option<f64>,
+    pub shadow_blur: Option<f64>,
 }
 
 impl Default for DisplayConfig {
@@ -25,6 +30,10 @@ impl Default for DisplayConfig {
             bottom: 30,
             color: "000000".to_string(),
             opacity: None,
+            shadow_enabled: None,
+            shadow_color: None,
+            shadow_opacity: None,
+            shadow_blur: None,
         }
     }
 }
@@ -95,6 +104,10 @@ fn load_config_internal(path: &str, silent: bool) -> Result<SnugConfig> {
                 bottom: config.get_or(&format!("{}.bottom", display), 30),
                 color: config.get_or(&format!("{}.color", display), "000000".to_string()),
                 opacity: config.get(&format!("{}.opacity", display)).ok(),
+                shadow_enabled: config.get(&format!("{}.shadow_enabled", display)).ok(),
+                shadow_color: config.get(&format!("{}.shadow_color", display)).ok(),
+                shadow_opacity: config.get(&format!("{}.shadow_opacity", display)).ok(),
+                shadow_blur: config.get(&format!("{}.shadow_blur", display)).ok(),
             };
             displays.insert(display.to_string(), display_config);
             if !silent {
