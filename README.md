@@ -23,6 +23,7 @@ to create the rounded corners effect of something like [quickshell](https://quic
 - **Per-monitor configuration:** You can have seperate configurations for each of your monitors.
 - **Colour theming:** RUNE makes it easy to create templates for say [pywal](https://github.com/dylanaraps/pywal) or [pywal16](https://github.com/eylles/pywal16)
 - **Bar support:** Integrates well with existing bars such as [waybar](https://github.com/Alexays/Waybar), see [example script](https://github.com/saltnpepper97/snug/blob/main/examples/launch-snug-with-waybar.sh) for details.
+>Important: Set "layer": "top" and "exclusive": false in your Waybar config. Also, reserve struts in your compositor (Hyprland/Niri) so Snug doesn’t overlap important UI areas
 
 ## Installation
 
