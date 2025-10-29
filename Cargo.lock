@@ -756,10 +756,11 @@ dependencies = [
 
 [[package]]
 name = "rune-cfg"
-version = "0.1.32"
+version = "0.1.33"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "600c2dcacccd65a235318eea77d2a4d32ee6dc97c3744b6b790ed1796e456798"
+checksum = "484588de73fce1cabfeb818a9d2c5cebcd3e03e66fcff1df93a051728336da82"
 dependencies = [
+ "indexmap",
  "once_cell",
  "serde",
  "serde_json",
@@ -896,7 +897,7 @@ dependencies = [
 
 [[package]]
 name = "snug"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "cairo-rs",
  "clap",
