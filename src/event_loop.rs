@@ -131,7 +131,7 @@ pub fn run_event_loop(
 fn setup_config_watcher(
     config_needs_reload: Arc<Mutex<bool>>,
     running: Arc<AtomicBool>,
-    custom_config_path: Option<String>, // FIXED: Accept custom config path
+    custom_config_path: Option<String>,
 ) {
     thread::spawn(move || {
         let config_path = custom_config_path
