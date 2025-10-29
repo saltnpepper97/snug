@@ -113,6 +113,7 @@ pub fn run_event_loop(
     setup_config_watcher(
         config_needs_reload.clone(),
         running.clone(),
+        args.config.clone(), // FIXED: Pass the custom config path
     );
     
     // Run the main loop
@@ -130,9 +131,14 @@ pub fn run_event_loop(
 fn setup_config_watcher(
     config_needs_reload: Arc<Mutex<bool>>,
     running: Arc<AtomicBool>,
+    custom_config_path: Option<String>, // FIXED: Accept custom config path
 ) {
     thread::spawn(move || {
-        let config_path = crate::config::get_config_path();
+        let config_path = custom_config_path
+            .map(std::path::PathBuf::from)
+            .unwrap_or_else(|| crate::config::get_config_path());
+        
+        eprintln!("Watching config file: {}", config_path.display());
         
         let (tx, rx) = std::sync::mpsc::channel();
         let mut watcher = notify::recommended_watcher(move |res: Result<Event, notify::Error>| {
@@ -145,6 +151,7 @@ fn setup_config_watcher(
         
         if watcher.watch(&config_path, RecursiveMode::NonRecursive).is_err() {
             // Config file might not exist yet, silently continue
+            eprintln!("Config file does not exist yet: {}", config_path.display());
             return;
         }
         
@@ -154,6 +161,7 @@ fn setup_config_watcher(
                 thread::sleep(Duration::from_millis(100));
                 while rx.try_recv().is_ok() {}
                 
+                eprintln!("Config file changed, reloading...");
                 *config_needs_reload.lock().unwrap() = true;
             }
         }
@@ -185,12 +193,26 @@ fn main_loop(
 
         // Config hot reload
         if *config_needs_reload.lock().unwrap() {
-            let new_config = load_config_or_default();
+            // FIXED: Load from custom config path if provided
+            let new_config = if let Some(path) = &cli_args.config {
+                match load_config_silent(path) {
+                    Ok(cfg) => cfg,
+                    Err(e) => {
+                        eprintln!("Failed to reload custom config from {}: {}", path, e);
+                        *config_needs_reload.lock().unwrap() = false;
+                        continue;
+                    }
+                }
+            } else {
+                load_config_or_default()
+            };
+            
             app.config = cli_args.merge_with_config(&new_config.get_display_config(&display_name));
             if app.width > 0 && app.height > 0 {
                 app.draw();
                 conn.flush()?;
                 last_draw_time = Instant::now();
+                eprintln!("Config reloaded and redrawn");
             }
             *config_needs_reload.lock().unwrap() = false;
         }
@@ -316,4 +338,3 @@ fn force_layer_recommit(app: &App) {
         layer.commit();
     }
 }
-
