@@ -33,10 +33,23 @@ impl Drop for LockGuard {
     }
 }
 
+// Helper to expand ~ in paths
+fn expand_tilde(path: &str) -> String {
+    if path.starts_with("~/") {
+        if let Some(home) = dirs::home_dir() {
+            return home.join(&path[2..]).to_string_lossy().to_string();
+        }
+    }
+    path.to_string()
+}
+
 /// Parent process: spawn a child for each configured display
 pub fn spawn_child_processes(args: Args) -> Result<(), Box<dyn std::error::Error>> {
-    // Load config using the path from args if provided
-    let snug_config = if let Some(path) = &args.config {
+    // Expand tilde in config path ONCE in parent
+    let expanded_config_path = args.config.as_ref().map(|p| expand_tilde(p));
+    
+    // Load config using the expanded path
+    let snug_config = if let Some(path) = &expanded_config_path {
         eprintln!("Loading config from: {}", path);
         load_config(path)?
     } else {
@@ -65,8 +78,8 @@ pub fn spawn_child_processes(args: Args) -> Result<(), Box<dyn std::error::Error
             let mut cmd = Command::new(&exe_path);
             cmd.arg("--display").arg(display_name);
             
-            // Pass config path to child if provided
-            if let Some(config_path) = &args.config {
+            // Pass EXPANDED config path to child
+            if let Some(config_path) = &expanded_config_path {
                 cmd.arg("-c").arg(config_path);
             }
             
