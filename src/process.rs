@@ -85,8 +85,7 @@ pub fn spawn_child_processes(args: Args) -> Result<(), Box<dyn std::error::Error
             
             cmd.pre_exec(|| {
                 // Kill child if parent dies
-                set_pdeathsig(Some(Signal::SIGTERM))
-                    .map_err(|e| std::io::Error::new(std::io::ErrorKind::Other, e))?;
+                set_pdeathsig(Some(Signal::SIGTERM))?;
                 Ok(())
             })
             .spawn()?;
